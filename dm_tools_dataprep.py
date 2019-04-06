@@ -7,7 +7,7 @@ def data_prep():
       df = pd.read_csv('CaseStudyData.csv')
     
       # drop columns
-      df = df.drop(['PurchaseID','PurchaseTimestamp','PurchaseDate','Color','WheelTypeID','MMRCurrentRetailRatio','PRIMEUNIT','AUCGUART','ForSale'], axis=1)
+      df = df.drop(['PurchaseID','PurchaseTimestamp','PurchaseDate','WheelTypeID','VehOdo','MMRCurrentRetailAveragePrice','MMRCurrentRetailCleanPrice','PRIMEUNIT','AUCGUART','ForSale'], axis=1)
     
       # prep 'Auction'
       df['Auction'] = df['Auction'].replace(np.nan,'MANHEIM')
@@ -20,6 +20,11 @@ def data_prep():
       df['Make'] = df['Make'].replace(np.nan,"CHEVROLET")
       df['Make'] = df['Make'].astype(str)
 
+      # prep 'Color'
+      df['Color'] = df['Color'].replace(np.nan,'SILVER')
+      df['Color'] = df['Color'].replace('？','SILVER')
+      df['Color'] = df['Color'].astype(str)
+
       # prep 'Transmission'    
       df['Transmission'] = df['Transmission'].replace('Manual','MANUAL')
       df['Transmission'] = df['Transmission'].replace('?','AUTO')
@@ -31,13 +36,6 @@ def data_prep():
       df['WheelType'] = df['WheelType'].replace("?","Alloy")
       df['WheelType'] = df['WheelType'].replace(np.nan,"Alloy")
       df['WheelType'] = df['WheelType'].astype(str)
-   
-      # prep 'VehOdo'
-      df['VehOdo'] = df['VehOdo'].replace('?', 0)
-      df['VehOdo'] = df['VehOdo'].astype(float)
-      mask = df['VehOdo'] < 1
-      df.loc[mask, 'VehOdo'] = np.nan
-      df['VehOdo'].fillna(df['VehOdo'].mean(), inplace=True)
     
       # prep 'Nationality'
       df['Nationality'] = df['Nationality'].replace(np.nan,"AMERICAN")
@@ -97,19 +95,13 @@ def data_prep():
       df.loc[mask, 'MMRCurrentAuctionCleanPrice'] = np.nan
       df['MMRCurrentAuctionCleanPrice'].fillna(df['MMRCurrentAuctionCleanPrice'].mean(), inplace=True)
 
-      # prep 'MMRCurrentRetailAveragePrice'
-      df['MMRCurrentRetailAveragePrice'] = df['MMRCurrentRetailAveragePrice'].replace('?',0)
-      df['MMRCurrentRetailAveragePrice'] = df['MMRCurrentRetailAveragePrice'].astype(float)
-      mask = df['MMRCurrentRetailAveragePrice'] < 1
-      df.loc[mask, 'MMRCurrentRetailAveragePrice'] = np.nan
-      df['MMRCurrentRetailAveragePrice'].fillna(df['MMRCurrentRetailAveragePrice'].mean(), inplace=True)
-   
-      # prep 'MMRCurrentRetailCleanPrice'
-      df['MMRCurrentRetailCleanPrice'] = df['MMRCurrentRetailCleanPrice'].replace('?',0)
-      df['MMRCurrentRetailCleanPrice'] = df['MMRCurrentRetailCleanPrice'].astype(float)
-      mask = df['MMRCurrentRetailCleanPrice'] < 1
-      df.loc[mask, 'MMRCurrentRetailCleanPrice'] = np.nan
-      df['MMRCurrentRetailCleanPrice'].fillna(df['MMRCurrentRetailCleanPrice'].mean(), inplace=True)
+      # Prep 'MMRCurrentRetailRatio'
+      df['MMRCurrentRetailRatio'] = df['MMRCurrentRetailRatio'].replace('?',0)
+      df['MMRCurrentRetailRatio'] = df['MMRCurrentRetailRatio'].replace('#VALUE!',0)
+      df['MMRCurrentRetailRatio'] = df['MMRCurrentRetailRatio'].astype(float)
+      mask = df['MMRCurrentRetailRatio'] < 1
+      df.loc[mask, 'MMRCurrentRetailRatio'] = np.nan
+      df['MMRCurrentRetailRatio'].fillna(df['MMRCurrentRetailRatio'].mean(), inplace=True)
     
       # prep 'VNST'
       df['VNST'] = df['VNST'].replace(np.nan,"TX")
@@ -141,4 +133,4 @@ def data_prep():
       return df
 
 ### we can import it like this for the remaining of the practicals
-# from dm_tools import data_prep
+# from dm_tools_dataprep import data_prep
